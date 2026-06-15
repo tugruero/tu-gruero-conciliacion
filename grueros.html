@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tu Gruero - Verificación de Servicios</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #f5f5f5 0%, #ececec 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-top: 20px;
+        }
+
+        .logo {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #F27731;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #999;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #F27731;
+            box-shadow: 0 0 0 3px rgba(242, 119, 49, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #F27731;
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #e86416;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(242, 119, 49, 0.3);
+        }
+
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+            border: 1px solid #ddd;
+            margin-top: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: #e8e8e8;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover:not(:disabled) {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            background: #c82333;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        .alert.active {
+            display: block;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .services-list {
+            margin: 25px 0;
+        }
+
+        .service-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 13px;
+        }
+
+        .service-item:last-child {
+            border-bottom: none;
+        }
+
+        .service-date {
+            color: #F27731;
+            font-weight: 600;
+        }
+
+        .service-code {
+            color: #666;
+        }
+
+        .service-amount {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .total-section {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #F27731;
+        }
+
+        .total-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .total-amount {
+            font-size: 28px;
+            font-weight: bold;
+            color: #F27731;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 30px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #F27731;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .success-message.active {
+            display: block;
+        }
+
+        .success-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        .success-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: #28a745;
+            margin-bottom: 10px;
+        }
+
+        .success-subtext {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .error-section {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 4px solid #ffc107;
+        }
+
+        .error-section-title {
+            font-weight: 600;
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .error-textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 13px;
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .error-textarea:focus {
+            outline: none;
+            border-color: #ffc107;
+            box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.1);
+        }
+
+        .breadcrumb {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .breadcrumb strong {
+            color: #F27731;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+
+            .card {
+                padding: 20px;
+                margin-bottom: 15px;
+            }
+
+            .title {
+                font-size: 20px;
+            }
+
+            .total-amount {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🚗</div>
+            <div class="title">Tu Gruero</div>
+            <div class="subtitle">Verificación de Servicios</div>
+        </div>
+
+        <div id="alertContainer"></div>
+
+        <!-- PASO 1: INGRESO DE CÉDULA -->
+        <div id="step1" class="card">
+            <div class="breadcrumb">Paso <strong>1 de 3</strong></div>
+
+            <form id="cedulaForm">
+                <div class="form-group">
+                    <label for="cedula">Ingresa tu Cédula de Identidad</label>
+                    <input
+                        type="text"
+                        id="cedula"
+                        placeholder="Ej: 12345678"
+                        maxlength="10"
+                        inputmode="numeric"
+                        required
+                    >
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    Verificar Servicios
+                </button>
+            </form>
+        </div>
+
+        <!-- PASO 2: VERIFICAR SERVICIOS -->
+        <div id="step2" class="card" style="display: none;">
+            <div class="breadcrumb">Paso <strong>2 de 3</strong></div>
+
+            <div class="loading" id="loadingServices">
+                <div class="spinner"></div>
+                <p>Cargando tus servicios...</p>
+            </div>
+
+            <div id="servicesContent" style="display: none;">
+                <div style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid #F27731;">
+                    <div style="font-size: 18px; font-weight: 600; color: #333;" id="grueroName"></div>
+                    <div style="font-size: 12px; color: #999; margin-top: 5px;">
+                        Semana del <span id="weekDate"></span>
+                    </div>
+                </div>
+
+                <h3 style="font-size: 14px; font-weight: 600; margin-bottom: 15px; color: #333;">Servicios Acumulados</h3>
+
+                <div class="services-list" id="servicesList"></div>
+
+                <div class="total-section">
+                    <div class="total-label">Monto Total a Cobrar</div>
+                    <div class="total-amount" id="totalAmount">$0.00</div>
+                </div>
+
+                <p style="font-size: 12px; color: #666; text-align: center; margin-top: 15px;">
+                    ¿Todos tus servicios están correctos y los montos son los indicados?
+                </p>
+            </div>
+        </div>
+
+        <!-- PASO 3: CONFIRMAR O REPORTAR ERROR -->
+        <div id="step3" class="card" style="display: none;">
+            <div class="breadcrumb">Paso <strong>3 de 3</strong></div>
+
+            <div id="confirmSection" style="display: block;">
+                <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 20px; color: #333;">
+                    ¿Los servicios son correctos?
+                </h3>
+
+                <button id="confirmBtn" class="btn btn-success">
+                    ✓ Sí, Todo Correcto
+                </button>
+
+                <button id="errorBtn" class="btn btn-danger" style="margin-top: 10px;">
+                    ⚠️ Hay un Error
+                </button>
+            </div>
+
+            <div id="errorSection" style="display: none;">
+                <div class="error-section">
+                    <div class="error-section-title">¿Cuál es el problema?</div>
+                    <p style="font-size: 12px; color: #666; margin-bottom: 10px;">
+                        Cuéntanos qué servicio falta o está mal:
+                    </p>
+                    <textarea
+                        id="errorDescription"
+                        class="error-textarea"
+                        placeholder="Ej: Falta el servicio OFIC07-0202739 del 04/06, o el monto debería ser $50 en lugar de $45"
+                    ></textarea>
+                </div>
+
+                <button id="submitErrorBtn" class="btn btn-danger" style="margin-top: 15px;">
+                    📤 Reportar Error
+                </button>
+
+                <button id="backBtn" class="btn btn-secondary">
+                    ← Volver
+                </button>
+            </div>
+        </div>
+
+        <!-- MENSAJE DE ÉXITO -->
+        <div id="successMessage" class="success-message">
+            <div class="success-icon">✓</div>
+            <div class="success-text">¡Confirmación Exitosa!</div>
+            <div class="success-subtext">
+                Tu verificación ha sido registrada. Recibirás tu comprobante en el correo
+            </div>
+
+            <div class="card" style="margin-top: 20px; border-left: 4px solid #28a745;">
+                <div style="font-size: 12px; color: #666; margin-bottom: 10px;">
+                    <strong>Resumen:</strong>
+                </div>
+                <div style="font-size: 13px; line-height: 1.8; color: #333;">
+                    <div>👤 Gruero: <strong id="summaryGruero"></strong></div>
+                    <div>📊 Servicios: <strong id="summarySericios"></strong></div>
+                    <div>💰 Total: <strong id="summaryTotal"></strong></div>
+                    <div>✓ Estado: <strong style="color: #28a745;">Confirmado</strong></div>
+                    <div>🕐 Hora: <strong id="summaryTime"></strong></div>
+                </div>
+            </div>
+
+            <button id="downloadPdfBtn" class="btn btn-primary" style="margin-top: 20px;">
+                📥 Descargar PDF
+            </button>
+        </div>
+
+        <!-- MENSAJE DE ERROR REPORTADO -->
+        <div id="errorReportedMessage" class="success-message">
+            <div class="success-icon">⚠️</div>
+            <div class="success-text">Error Reportado</div>
+            <div class="success-subtext">
+                Hemos registrado tu reporte. El administrador lo revisará y te contactará en breve
+            </div>
+
+            <div class="card" style="margin-top: 20px; border-left: 4px solid #ffc107;">
+                <div style="font-size: 12px; color: #666; margin-bottom: 10px;">
+                    <strong>Detalles del reporte:</strong>
+                </div>
+                <div id="errorSummary" style="font-size: 13px; line-height: 1.8; color: #333;">
+                </div>
+            </div>
+
+            <button id="returnBtn" class="btn btn-secondary" style="margin-top: 20px;">
+                ← Volver a Inicio
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Configuración
+        const GOOGLE_APPS_SCRIPT_URL = 'TU_GOOGLE_APPS_SCRIPT_URL_AQUI'; // Lo configurarás después
+
+        let grueroData = null;
+
+        // Event Listeners
+        document.getElementById('cedulaForm').addEventListener('submit', handleCedulaSubmit);
+        document.getElementById('confirmBtn').addEventListener('click', confirmServicios);
+        document.getElementById('errorBtn').addEventListener('click', () => {
+            document.getElementById('confirmSection').style.display = 'none';
+            document.getElementById('errorSection').style.display = 'block';
+        });
+        document.getElementById('backBtn').addEventListener('click', () => {
+            document.getElementById('confirmSection').style.display = 'block';
+            document.getElementById('errorSection').style.display = 'none';
+        });
+        document.getElementById('submitErrorBtn').addEventListener('click', reportError);
+        document.getElementById('returnBtn').addEventListener('click', restart);
+        document.getElementById('downloadPdfBtn').addEventListener('click', downloadPdf);
+
+        // Funciones principales
+        function handleCedulaSubmit(e) {
+            e.preventDefault();
+
+            const cedula = document.getElementById('cedula').value.trim();
+
+            if (cedula.length < 6) {
+                showAlert('Por favor ingresa una cédula válida', 'error');
+                return;
+            }
+
+            document.getElementById('step1').style.display = 'none';
+            document.getElementById('step2').style.display = 'block';
+            document.getElementById('loadingServices').classList.add('active');
+
+            // Simular carga de servicios
+            setTimeout(() => {
+                loadServicios(cedula);
+            }, 2000);
+        }
+
+        function loadServicios(cedula) {
+            // TODO: Llamar a Google Apps Script para obtener servicios
+            // Por ahora, simularemos con datos
+
+            grueroData = {
+                cedula: cedula,
+                nombre: 'TECNO MOTRIZ COLINAS CAR',
+                servicios: [
+                    { fecha: '04/06/2026', codigo: 'OFIC07-0202739', monto: 45 },
+                    { fecha: '03/06/2026', codigo: 'OFIC16-0202788', monto: 70 },
+                    { fecha: '03/06/2026', codigo: 'OFIC13-0202815', monto: 80 }
+                ]
+            };
+
+            displayServicios();
+        }
+
+        function displayServicios() {
+            const total = grueroData.servicios.reduce((sum, s) => sum + s.monto, 0);
+
+            document.getElementById('grueroName').textContent = grueroData.nombre;
+            document.getElementById('weekDate').textContent = new Date().toLocaleDateString('es-ES');
+
+            let servicesHTML = '';
+            grueroData.servicios.forEach(s => {
+                servicesHTML += `
+                    <div class="service-item">
+                        <div style="flex: 1;">
+                            <div class="service-code">${s.codigo}</div>
+                            <div class="service-date">${s.fecha}</div>
+                        </div>
+                        <div class="service-amount">$${s.monto.toFixed(2)}</div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('servicesList').innerHTML = servicesHTML;
+            document.getElementById('totalAmount').textContent = '$' + total.toFixed(2);
+
+            document.getElementById('loadingServices').classList.remove('active');
+            document.getElementById('servicesContent').style.display = 'block';
+            document.getElementById('step3').style.display = 'block';
+        }
+
+        function confirmServicios() {
+            document.getElementById('step2').style.display = 'none';
+            document.getElementById('step3').style.display = 'none';
+            document.getElementById('successMessage').classList.add('active');
+
+            const total = grueroData.servicios.reduce((sum, s) => sum + s.monto, 0);
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+
+            document.getElementById('summaryGruero').textContent = grueroData.nombre;
+            document.getElementById('summarySericios').textContent = grueroData.servicios.length;
+            document.getElementById('summaryTotal').textContent = '$' + total.toFixed(2);
+            document.getElementById('summaryTime').textContent = timeStr;
+
+            showAlert('¡Confirmación registrada correctamente!', 'success');
+        }
+
+        function reportError() {
+            const description = document.getElementById('errorDescription').value.trim();
+
+            if (!description) {
+                showAlert('Por favor describe el error', 'error');
+                return;
+            }
+
+            document.getElementById('step2').style.display = 'none';
+            document.getElementById('step3').style.display = 'none';
+            document.getElementById('errorReportedMessage').classList.add('active');
+
+            document.getElementById('errorSummary').innerHTML = `
+                <div>👤 Gruero: <strong>${grueroData.nombre}</strong></div>
+                <div>🔢 Cédula: <strong>${grueroData.cedula}</strong></div>
+                <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #eee;">
+                    <strong>Descripción del error:</strong>
+                </div>
+                <div style="margin-top: 8px; font-style: italic; color: #666;">
+                    "${description}"
+                </div>
+            `;
+
+            showAlert('Error reportado al administrador', 'info');
+        }
+
+        function downloadPdf() {
+            const total = grueroData.servicios.reduce((sum, s) => sum + s.monto, 0);
+            // TODO: Generar y descargar PDF
+            showAlert('Generando PDF...', 'info');
+        }
+
+        function restart() {
+            location.reload();
+        }
+
+        function showAlert(message, type) {
+            const container = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type} active`;
+            alert.textContent = message;
+            container.innerHTML = '';
+            container.appendChild(alert);
+
+            if (type !== 'error') {
+                setTimeout(() => alert.remove(), 5000);
+            }
+        }
+    </script>
+</body>
+</html>
