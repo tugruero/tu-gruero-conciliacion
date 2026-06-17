@@ -506,7 +506,7 @@
 
     <script>
         // Configuración
-        const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw5j2LAHSJv00FF36jNN9RhvAyAEc3ls-9Reu1WDqvum9PgNUBZL7UAC_tbxnzYauPiFw'; // Lo configurarás después
+        const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw5j2LAHSJv00FF36jNN9RhvAyAEc3ls-9Reu1WDqvum9PgNUBZL7UAC_tbxnzYauPiFw';
 
         let grueroData = null;
 
@@ -543,24 +543,29 @@
             // Simular carga de servicios
             setTimeout(() => {
                 loadServicios(cedula);
-            }, 2000);
+            }, 1000);
         }
 
         function loadServicios(cedula) {
-            // TODO: Llamar a Google Apps Script para obtener servicios
-            // Por ahora, simularemos con datos
-
-            grueroData = {
-                cedula: cedula,
-                nombre: 'TECNO MOTRIZ COLINAS CAR',
-                servicios: [
-                    { fecha: '04/06/2026', codigo: 'OFIC07-0202739', monto: 45 },
-                    { fecha: '03/06/2026', codigo: 'OFIC16-0202788', monto: 70 },
-                    { fecha: '03/06/2026', codigo: 'OFIC13-0202815', monto: 80 }
-                ]
-            };
-
-            displayServicios();
+            const url = `${GOOGLE_APPS_SCRIPT_URL}?action=obtener_servicios&cedula=${cedula}`;
+            
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    grueroData = data;
+                    if (grueroData.encontrado) {
+                        displayServicios();
+                    } else {
+                        showAlert('Cédula no encontrada', 'error');
+                        document.getElementById('step1').style.display = 'block';
+                        document.getElementById('step2').style.display = 'none';
+                    }
+                    document.getElementById('loadingServices').classList.remove('active');
+                })
+                .catch(error => {
+                    showAlert('Error obteniendo servicios: ' + error, 'error');
+                    document.getElementById('loadingServices').classList.remove('active');
+                });
         }
 
         function displayServicios() {
@@ -634,8 +639,6 @@
         }
 
         function downloadPdf() {
-            const total = grueroData.servicios.reduce((sum, s) => sum + s.monto, 0);
-            // TODO: Generar y descargar PDF
             showAlert('Generando PDF...', 'info');
         }
 
